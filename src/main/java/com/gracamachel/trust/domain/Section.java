@@ -1,5 +1,6 @@
 package com.gracamachel.trust.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -11,22 +12,20 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "section")
 public class Section {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
+    private Integer id;
     @Version
-    private long version;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name ="date_created")
-    private Date dateCreated;
-    private String description;
-    private Boolean enabled;
+    @JsonIgnore
+    private Integer version;
+    @Column(unique = true)
     private String name;
+    private String description;
+    private boolean enabled;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateCreated;
 
 
 }

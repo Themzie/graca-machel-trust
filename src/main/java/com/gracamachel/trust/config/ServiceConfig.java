@@ -14,6 +14,9 @@ import com.gracamachel.trust.service.surveySectionQuestionChoice.SurveySectionQu
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
 /**
  * Created by thembelani on 11/2/17.
@@ -46,4 +49,5 @@ public class ServiceConfig {
     public SurveySectionQuestionChoiceService surveySectionQuestionChoiceService(SurveySectionQuestionChoiceRepository surveySectionQuestionChoiceRepository){
         return new SurveySectionQuestionChoiceServiceImpl(surveySectionQuestionChoiceRepository);
     }
+
 }

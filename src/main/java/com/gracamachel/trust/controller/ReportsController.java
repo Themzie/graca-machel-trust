@@ -8,6 +8,8 @@ import com.gracamachel.trust.service.survey.SurveyService;
 import com.gracamachel.trust.service.surveySection.SurveySectionService;
 import com.gracamachel.trust.service.surveySectionQuestion.SurveySectionQuestionService;
 import com.gracamachel.trust.service.surveySectionQuestionChoice.SurveySectionQuestionChoiceService;
+import com.gracamachel.trust.utils.Colours;
+import com.gracamachel.trust.utils.RandomNumberGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,19 +78,44 @@ public class ReportsController {
         model.addAttribute("surveys",surveyService.listAllSurveys());
         if(!responseList.isEmpty()) {
             Map<String, Long> choiceCountMap = responseList.stream().collect(Collectors.groupingBy(Response::getChoiceValue, Collectors.counting()));
+            long[] totalChoiceCount = new long[1];
+            choiceCountMap.entrySet().stream().forEach(choiceCountEntry -> totalChoiceCount[0] =totalChoiceCount[0]+choiceCountEntry.getValue() );
+            log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>> Choice count Map {}",choiceCountMap.toString());
+
+            System.out.println("##################################Total {}"+totalChoiceCount[0]);
             long maxRangeValue = choiceCountMap.entrySet().stream().mapToLong(choiceCountMapEntry -> choiceCountMapEntry.getValue()).max().orElseThrow(NoSuchElementException::new);
             List<BarChartPlot> barChartPlotsList = new ArrayList<>();
+            List<Slice> pieChartSliceList = new ArrayList<>();
             choiceCountMap.entrySet().stream().forEach(choiceCountMapEntry -> {
-                BarChartPlot barChartPlot = Plots.newBarChartPlot(Data.newData(choiceCountMapEntry.getValue()*10), Color.RED, choiceCountMapEntry.getKey());
+                BarChartPlot barChartPlot = Plots.newBarChartPlot(Data.newData(choiceCountMapEntry.getValue()), Color.RED, choiceCountMapEntry.getKey());
                 barChartPlotsList.add(barChartPlot);
+                log.info("################################# Total {}",totalChoiceCount[0]);
+                log.debug("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CHOICE {}  VALUE {}",choiceCountMapEntry.getKey(),choiceCountMapEntry.getValue());
+                log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>> % CALC {}",(((double)choiceCountMapEntry.getValue()/totalChoiceCount[0]))*100);
+                Slice pieChartSlice = Slice.newSlice(Math.toIntExact(choiceCountMapEntry.getValue()),Colours.all().get(RandomNumberGenerator.generateIntWithSetLimit(Colours.all().size()-1)), choiceCountMapEntry.getKey(),
+                        "[ Value :"+choiceCountMapEntry.getValue()+"]    "+String.valueOf(((double)choiceCountMapEntry.getValue()/Math.toIntExact(totalChoiceCount[0]))*100)+"%");
+                pieChartSliceList.add(pieChartSlice);
+
             });
 
+
+            //bar chart
             BarChart barChart = GCharts.newBarChart(barChartPlotsList);
-            barChart.setTitle("Customer Responses",Color.MAROON,25);
-            barChart.setSize(700, 400);
+            barChart.setTitle("Responses : Bar Graph",Color.MAROON,20);
+            barChart.setSize(500, 500);
             barChart.setSpaceBetweenGroupsOfBars(10);
-            barChart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0, maxRangeValue*10));
+            barChart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0, maxRangeValue+10));
             barChart.setBarWidth(BarChart.AUTO_RESIZE);
+
+            //pie chart
+            PieChart pieChart = GCharts.newPieChart(pieChartSliceList);
+            pieChart.setTitle("Responses: Pie Chart",Color.BLUE,20);
+            pieChart.setSize(700,400);
+            pieChart.setThreeD(true);
+            pieChart.setLegendPosition(LegendPosition.BOTTOM_VERTICAL);
+
+
+            model.addAttribute("pieUrl",pieChart.toURLString());
             model.addAttribute("barChartUrl", barChart.toURLString());
             model.addAttribute("survey", surveyService.findById(surveyId));
             model.addAttribute("surveySection",surveySectionService.findById(surveySectionId));

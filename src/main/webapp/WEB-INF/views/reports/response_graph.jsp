@@ -90,6 +90,13 @@
             });
         }
     </script>
+
+    <script>
+        function pleaseWait() {
+            $('#myPleaseWait').modal('show');
+        }
+    </script>
+
 </head>
 <body>
 <jsp:include page="../fragments/header.jsp"></jsp:include>
@@ -99,6 +106,30 @@
 <div class="container-fluid xyz">
     <div class="row">
         <div class="col-lg-8">
+
+
+            <div class="modal fade bs-example-modal-sm" id="myPleaseWait" tabindex="-1"
+                 role="dialog" aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-time">
+                    </span>Please Wait
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-info
+                    progress-bar-striped active"
+                                     style="width: 100%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <h2>Survey Response Analysis</h2>
             <c:if test="${!empty error }">
                 <div class="alert alert-danger">
@@ -148,10 +179,23 @@
                            required/>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" onclick="pleaseWait()">Submit</button>
             </form>
+        </div>
+        <br/>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
             <c:if test="${!empty barChartUrl}">
-            <img alt="Google Pie Chart" src=${barChartUrl} />
+                <img alt="Bar Chart" src=${barChartUrl} />
+            </c:if>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <c:if test="${!empty pieUrl}">
+                <img alt="Pie Chart" src=${pieUrl} />
             </c:if>
         </div>
     </div>

@@ -1,32 +1,31 @@
 package com.gracamachel.trust.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
  * Created by thembelani on 11/3/17.
  */
-@Table(name = "survey_section")
 @Entity
 @Data
 public class SurveySection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Version
-    private long version;
-    @Column(name = "date_created")
+    @JsonIgnore
+    private Integer version;
+    @ManyToOne(optional=false)
+    @JoinColumn(nullable = false)
+    private Survey survey;
+    @ManyToOne(optional=false)
+    @JoinColumn(nullable = false)
+    private Section section;
+    private boolean enabled;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
-    private Boolean enabled;
-    @ManyToOne
-
-    @JoinColumn(name = "section_id", referencedColumnName = "id")
-    private Section section;
-
-    @ManyToOne
-    @JoinColumn(name = "survey_id", referencedColumnName = "id")
-    private Survey survey;
 }
