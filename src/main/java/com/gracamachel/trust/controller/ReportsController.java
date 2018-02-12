@@ -81,30 +81,26 @@ public class ReportsController {
             long[] totalChoiceCount = new long[1];
             choiceCountMap.entrySet().stream().forEach(choiceCountEntry -> totalChoiceCount[0] =totalChoiceCount[0]+choiceCountEntry.getValue() );
             log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>> Choice count Map {}",choiceCountMap.toString());
-
-            System.out.println("##################################Total {}"+totalChoiceCount[0]);
-            long maxRangeValue = choiceCountMap.entrySet().stream().mapToLong(choiceCountMapEntry -> choiceCountMapEntry.getValue()).max().orElseThrow(NoSuchElementException::new);
+            Long maxRangeValue = choiceCountMap.entrySet().stream().mapToLong(choiceCountMapEntry -> choiceCountMapEntry.getValue()).max().orElseThrow(NoSuchElementException::new);
             List<BarChartPlot> barChartPlotsList = new ArrayList<>();
             List<Slice> pieChartSliceList = new ArrayList<>();
             choiceCountMap.entrySet().stream().forEach(choiceCountMapEntry -> {
-                BarChartPlot barChartPlot = Plots.newBarChartPlot(Data.newData(choiceCountMapEntry.getValue()), Color.RED, choiceCountMapEntry.getKey());
+                log.debug("############################################### map entry value {} double value {}####################",choiceCountMapEntry.getValue(),choiceCountMapEntry.getValue().doubleValue());
+                BarChartPlot barChartPlot = Plots.newBarChartPlot(Data.newData(choiceCountMapEntry.getValue().intValue()), Colours.all().get(RandomNumberGenerator.generateIntWithSetLimit(Colours.all().size()-1)), choiceCountMapEntry.getKey()+" [Value :"+choiceCountMapEntry.getValue()+"]");
                 barChartPlotsList.add(barChartPlot);
-                log.info("################################# Total {}",totalChoiceCount[0]);
-                log.debug("<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CHOICE {}  VALUE {}",choiceCountMapEntry.getKey(),choiceCountMapEntry.getValue());
-                log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>> % CALC {}",(((double)choiceCountMapEntry.getValue()/totalChoiceCount[0]))*100);
                 Slice pieChartSlice = Slice.newSlice(Math.toIntExact(choiceCountMapEntry.getValue()),Colours.all().get(RandomNumberGenerator.generateIntWithSetLimit(Colours.all().size()-1)), choiceCountMapEntry.getKey(),
                         "[ Value :"+choiceCountMapEntry.getValue()+"]    "+String.valueOf(((double)choiceCountMapEntry.getValue()/Math.toIntExact(totalChoiceCount[0]))*100)+"%");
                 pieChartSliceList.add(pieChartSlice);
-
             });
 
 
             //bar chart
             BarChart barChart = GCharts.newBarChart(barChartPlotsList);
             barChart.setTitle("Responses : Bar Graph",Color.MAROON,20);
-            barChart.setSize(500, 500);
+            barChart.setSize(500, 600);
             barChart.setSpaceBetweenGroupsOfBars(10);
-            barChart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0, maxRangeValue+10));
+            double scale = (double) maxRangeValue/barChartPlotsList.size();
+            barChart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0, Math.pow(10,String.valueOf(maxRangeValue).length())));
             barChart.setBarWidth(BarChart.AUTO_RESIZE);
 
             //pie chart

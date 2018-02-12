@@ -16,7 +16,6 @@ public class   Colours {
         colorList.add(Color.RED);
         colorList.add(Color.BLUE);
         colorList.add(Color.GREEN);
-        colorList.add(Color.GREEN);
         colorList.add(Color.ORANGE);
         colorList.add(Color.PURPLE);
         colorList.add(Color.BLACK);
@@ -33,6 +32,11 @@ public class   Colours {
         colorList.add(Color.CHOCOLATE);
         colorList.add(Color.DARKRED);
         colorList.add(Color.HOTPINK);
+        colorList.add(Color.SILVER);
+        colorList.add(Color.DARKRED);
+        colorList.add(Color.LIGHTSKYBLUE);
+        colorList.add(Color.LIGHTGREEN);
+        colorList.add(Color.LIGHTPINK);
         return colorList;
     }
 }
